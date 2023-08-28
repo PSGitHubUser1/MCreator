@@ -1,6 +1,7 @@
 /*
  * MCreator (https://mcreator.net/)
- * Copyright (C) 2020 Pylo and contributors
+ * Copyright (C) 2012-2020, Pylo
+ * Copyright (C) 2020-2023, Pylo, opensource contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -765,6 +766,7 @@ public class TestWorkspaceDataProvider {
 		} else if (ModElementType.PLANT.equals(modElement.getType())) {
 			Plant plant = new Plant(modElement);
 			plant.name = modElement.getName();
+			plant.plantType = new String[] { "normal", "growapable", "double", "normal" }[valueIndex];
 			plant.spawnWorldTypes = new ArrayList<>(Arrays.asList("Nether", "Surface", "End"));
 			plant.creativeTab = new TabEntry(modElement.getWorkspace(),
 					getRandomDataListEntry(random, ElementUtil.loadAllTabs(modElement.getWorkspace())));
@@ -772,10 +774,7 @@ public class TestWorkspaceDataProvider {
 			plant.textureBottom = "test2";
 			plant.itemTexture = emptyLists ? "" : "itest";
 			plant.particleTexture = emptyLists ? "" : "test3";
-			plant.plantType = new String[] { "normal", "growapable", "double", "normal" }[valueIndex];
 			plant.growapableSpawnType = getRandomItem(random, ElementUtil.getDataListAsStringArray("planttypes"));
-			plant.staticPlantGenerationType = getRandomItem(random, new String[] { "Grass", "Flower" });
-			plant.doublePlantGenerationType = getRandomItem(random, new String[] { "Grass", "Flower" });
 			plant.suspiciousStewEffect = getRandomString(random,
 					ElementUtil.loadAllPotionEffects(modElement.getWorkspace()).stream().map(DataListEntry::getName)
 							.toList());
@@ -840,6 +839,7 @@ public class TestWorkspaceDataProvider {
 			plant.frequencyOnChunks = 13;
 			plant.patchSize = 46;
 			plant.generateAtAnyHeight = _true;
+			plant.generationType = getRandomItem(random, new String[] { "Grass", "Flower" });
 			plant.flammability = 5;
 			plant.fireSpreadSpeed = 12;
 			plant.speedFactor = 34.632;
@@ -873,10 +873,16 @@ public class TestWorkspaceDataProvider {
 			plant.tintType = getRandomString(random,
 					Arrays.asList("No tint", "Grass", "Foliage", "Birch foliage", "Spruce foliage", "Default foliage",
 							"Water", "Sky", "Fog", "Water fog"));
-			plant.renderType = new int[] { 13, !"No tint".equals(plant.tintType) ? 120 : 12, 13,
-					!"No tint".equals(plant.tintType) ? 120 : 12 }[valueIndex];
-			plant.customModelName = new String[] { "Crop model", "Cross model", "Crop model",
-					"Cross model" }[valueIndex];
+
+			if ("double".equals(plant.plantType)) {
+				plant.renderType = !"No tint".equals(plant.tintType) ? 120 : 12;
+				plant.customModelName = "Cross model";
+			} else {
+				plant.renderType = new int[] { 13, !"No tint".equals(plant.tintType) ? 120 : 12, 13,
+						!"No tint".equals(plant.tintType) ? 120 : 12 }[valueIndex];
+				plant.customModelName = new String[] { "Crop model", "Cross model", "Crop model",
+						"Cross model" }[valueIndex];
+			}
 			plant.isItemTinted = _true;
 			if (!emptyLists) {
 				plant.isBonemealable = true;
@@ -1740,14 +1746,12 @@ public class TestWorkspaceDataProvider {
 		List<MCItem> blocksAndItemsAndTags = ElementUtil.loadBlocksAndItemsAndTags(modElement.getWorkspace());
 		List<MCItem> blocksAndItems = ElementUtil.loadBlocksAndItems(modElement.getWorkspace());
 
-		if ("Crafting".equals(recipe.recipeType)) {
+		switch (recipe.recipeType) {
+		case "Crafting" -> {
 			MItemBlock[] recipeSlots = new MItemBlock[9];
-
 			Arrays.fill(recipeSlots, new MItemBlock(modElement.getWorkspace(), ""));
-
 			recipeSlots[0] = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItemsAndTags).getName());
-
 			if (random.nextBoolean())
 				recipeSlots[3] = new MItemBlock(modElement.getWorkspace(),
 						getRandomMCItem(random, blocksAndItemsAndTags).getName());
@@ -1777,56 +1781,63 @@ public class TestWorkspaceDataProvider {
 			recipe.recipeReturnStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItems).getName());
 			recipe.recipeSlots = recipeSlots;
-		} else if ("Smelting".equals(recipe.recipeType)) {
+		}
+		case "Smelting" -> {
 			recipe.smeltingInputStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItemsAndTags).getName());
 			recipe.smeltingReturnStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItems).getName());
 			recipe.xpReward = 1.234;
 			recipe.cookingTime = 123;
-		} else if ("Smoking".equals(recipe.recipeType)) {
+		}
+		case "Smoking" -> {
 			recipe.smokingInputStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItemsAndTags).getName());
 			recipe.smokingReturnStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItems).getName());
 			recipe.xpReward = 12.34;
 			recipe.cookingTime = 42;
-		} else if ("Blasting".equals(recipe.recipeType)) {
+		}
+		case "Blasting" -> {
 			recipe.blastingInputStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItemsAndTags).getName());
 			recipe.blastingReturnStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItems).getName());
 			recipe.xpReward = 21.234;
 			recipe.cookingTime = 1000;
-		} else if ("Stone cutting".equals(recipe.recipeType)) {
+		}
+		case "Stone cutting" -> {
 			recipe.stoneCuttingInputStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItemsAndTags).getName());
 			recipe.stoneCuttingReturnStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItems).getName());
 			recipe.recipeRetstackSize = 32;
-		} else if ("Campfire cooking".equals(recipe.recipeType)) {
+		}
+		case "Campfire cooking" -> {
 			recipe.campfireCookingInputStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItemsAndTags).getName());
 			recipe.campfireCookingReturnStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItems).getName());
 			recipe.xpReward = 21.234;
 			recipe.cookingTime = 2983;
-		} else if ("Smithing".equals(recipe.recipeType)) {
+		}
+		case "Smithing" -> {
 			recipe.smithingInputStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItemsAndTags).getName());
 			recipe.smithingInputAdditionStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItemsAndTags).getName());
 			recipe.smithingReturnStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItems).getName());
-		} else if ("Brewing".equals(recipe.recipeType)) {
+		}
+		case "Brewing" -> {
 			recipe.brewingInputStack = new MItemBlock(modElement.getWorkspace(), getRandomMCItem(random,
 					ElementUtil.loadBlocksAndItemsAndTagsAndPotions(modElement.getWorkspace())).getName());
 			recipe.brewingIngredientStack = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItemsAndTags).getName());
 			recipe.brewingReturnStack = new MItemBlock(modElement.getWorkspace(), getRandomMCItem(random,
 					ElementUtil.loadBlocksAndItemsAndPotions(modElement.getWorkspace())).getName());
-		} else {
-			throw new RuntimeException("Unknown recipe type");
+		}
+		default -> throw new RuntimeException("Unknown recipe type");
 		}
 		return recipe;
 	}
