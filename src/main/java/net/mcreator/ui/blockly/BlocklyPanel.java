@@ -272,8 +272,7 @@ public class BlocklyPanel extends JFXPanel {
 			ThreadUtil.runOnFxThread(query);
 			return query.get();
 		} catch (InterruptedException | ExecutionException e) {
-			LOG.error(javaScript);
-			LOG.error(e.getMessage(), e);
+			LOG.error("Failed to execute: " + javaScript, e);
 		}
 		return null;
 	}
