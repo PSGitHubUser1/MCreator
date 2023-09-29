@@ -1,7 +1,7 @@
 let global_variables = [];
 
-Blockly.utils.colour.setHsvSaturation(0.37);
-Blockly.utils.colour.setHsvValue(0.60);
+Blockly.utils.colour.setHsvSaturation(MCR_BLOCKLY_PREF['saturation']);
+Blockly.utils.colour.setHsvValue(MCR_BLOCKLY_PREF['value']);
 
 const blockly = document.getElementById('blockly');
 const workspace = Blockly.inject(blockly, {
