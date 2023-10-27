@@ -22,7 +22,6 @@ package net.mcreator.ui.minecraft.potions;
 import net.mcreator.element.types.Potion;
 import net.mcreator.ui.MCreator;
 import net.mcreator.ui.component.entries.JSimpleEntriesList;
-import net.mcreator.ui.component.entries.JSimpleListEntry;
 import net.mcreator.ui.help.IHelpContext;
 import net.mcreator.ui.init.L10N;
 
@@ -43,9 +42,8 @@ public class JPotionList extends JSimpleEntriesList<JPotionListEntry, Potion.Cus
 				(Color) UIManager.get("MCreatorLAF.BRIGHT_COLOR")));
 	}
 
-	@Override
-	protected JPotionListEntry newEntry(JPanel parent, List<JPotionListEntry> entryList) {
-		return new JPotionListEntry(mcreator, gui, entries, entryList);
+	@Override protected JPotionListEntry newEntry(JPanel parent, List<JPotionListEntry> entryList, boolean userAction) {
+		return new JPotionListEntry(mcreator, gui, parent, entryList);
 	}
 
 }
