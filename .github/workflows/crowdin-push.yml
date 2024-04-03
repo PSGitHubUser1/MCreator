@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: crowdin/github-action@cb33a030bb1675169b76617d5805242aeea6eaec
+      - uses: crowdin/github-action@885b5992f969fe49267755b39a985ea4bf06710d
         name: Push sources to Crowdin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
