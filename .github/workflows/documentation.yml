@@ -19,7 +19,7 @@ jobs:
       - name: Generate Javadoc
         run: ./gradlew javadoc
       - name: Deploy Javadoc
-        uses: JamesIves/github-pages-deploy-action@65b5dfd4f5bcd3a7403bbc2959c144256167464e
+        uses: JamesIves/github-pages-deploy-action@3e94235108ee1f813b910e9dbceaa9a1543ecfae
         with:
           branch: javadoc
           clean: true
